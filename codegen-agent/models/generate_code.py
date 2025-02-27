@@ -1,4 +1,4 @@
-from model.vulnerability import Vulnerability
+from models.vulnerability import Vulnerability
 from pydantic import BaseModel
 
 class GenerateCodeRequest(BaseModel):
