@@ -77,6 +77,10 @@ class BaseLLMService:
                 "content": "Tôi sẽ cung cấp cho bạn một đoạn mã hoặc câu trả lời. Bạn hãy sử dụng ngữ cảnh này để tạo ra câu hỏi lập trình liên quan đến đoạn mã hoặc câu trả lời đó."
             },
             {
+                "role": "user",
+                "content": "Lưu ý, bạn chỉ cần đưa ra 5 câu hỏi, mỗi câu ở 1 dòng riêng biệt.Ví dụ về phản hồi của bạn: \n- Câu hỏi 1: Nội dung \n- Câu hỏi 2: Nội dung \n"
+            },
+            {
                 "role": "assistant",
                 "content": "Chắc chắn rồi. Vui lòng cung cấp ngữ cảnh chứa mã hoặc câu trả lời để tôi có thể tạo ra câu hỏi lập trình liên quan đến ngữ cảnh đó cho bạn cho bạn."
             },
