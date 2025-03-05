@@ -1,5 +1,4 @@
 requests
-bandit
-cppcheck
-pandas
 logging
+flask
+python-dotenv
