@@ -14,7 +14,8 @@ class ItelrationRepairService:
         request_llm = GenerateCodeRequest(
             prompt = input.prompt,
             temperature = 0.5,  # Gán giá trị tùy chỉnh
-            max_tokens = 500
+            max_tokens = 500,
+            model_type = "chatgpt"
         )
         codeGen = await self.common_service.callLLMChatGPT(request_llm)
 
@@ -26,12 +27,7 @@ class ItelrationRepairService:
             if not sastResult.vulnerabilities:
                 break
         
-            request_llm = GenerateCodeRequest(
-                prompt = input.prompt,
-                temperature = 0.5,  # Gán giá trị tùy chỉnh
-                max_tokens = 500,
-                vulnerabilities = sastResult.vulnerabilities
-            )
+            request_llm.vulnerabilities = sastResult.vulnerabilities
             codeGen = await self.common_service.callLLMChatGPT(request_llm)
             
         return codeGen
