@@ -15,13 +15,14 @@ class ItelrationRepairService:
             prompt = input.prompt,
             temperature = 0.5,  # Gán giá trị tùy chỉnh
             max_tokens = 500,
-            model_type = "chatgpt"
+            model_type = "chatgpt",
+            vulnerabilities = []
         )
         codeGen = await self.common_service.callLLMChatGPT(request_llm)
 
         for _ in range(input.max_iterations):  
             request_sast = SASTToolRequest(
-                    code = codeGen
+                    code = codeGen.code
                 )
             sastResult = await self.common_service.callSASTTool(request_sast)
             if not sastResult.vulnerabilities:

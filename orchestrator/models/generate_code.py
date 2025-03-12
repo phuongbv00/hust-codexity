@@ -8,7 +8,7 @@ class GenerateCodeRequest(BaseModel):
     prompt: str
     temperature: float
     max_tokens: int
-    model_type: LLM_TYPE
+    model_type: str
     vulnerabilities: list[Vulnerability]
 
 class GenerateCodeResponse:

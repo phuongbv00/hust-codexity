@@ -15,11 +15,12 @@ class PreshotRepairService:
             prompt = input.prompt,
             temperature = 0.5,  # Gán giá trị tùy chỉnh
             max_tokens = 500,
-            model_type = "local"
+            model_type = "local",
+            vulnerabilities = []
         )
         codeGen = await self.common_service.callLLMChatGPT(request_llm)
         request_sast = SASTToolRequest(
-            code = codeGen
+            code = codeGen.code
             )
         sastResult = await self.common_service.callSASTTool(request_sast)
 
