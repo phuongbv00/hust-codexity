@@ -15,15 +15,15 @@ class BaseLLMService:
         return [
             {
                 "role": "system", 
-                "content": "Bạn là lập trình viên xuất sắc có thể giúp người dùng tạo ra các đoạn mã"
+                "content": "You are a C language programming expert."
             },
             {
                 "role": "user", 
-                "content": "Tôi sẽ đưa ra ý tưởng, bài toán hoặc một chương trình chưa hoàn thiện.Tôi muốn bạn hoàn thành chương trình đó cho tôi.Chỉ đưa ra mã nguồn của chương trình hoàn chỉnh(không phải chỉ đoạn code bạn viết thêm) ở dạng text, không cần giải thích gì thêm, không cần đưa vào block code markdown"
+                "content": "I will provide an idea, a problem, or an incomplete program. I want you to complete the program for me. And return full source code of the program(not just the part you write) in plain text without any additional explanation, comment and markdown code blocks."
             },
             {
                 "role": "assistant",
-                "content": "Chắc chắn rồi.Bạn hãy đưa ra ý tưởng hoặc đoạn code cần tôi hoàn thiện.Tôi sẽ giúp bạn hoàn thiện chương trình một cách hoàn chỉnh"
+                "content": "Certainly. Please provide the idea or the code that needs completion. I will help you produce a fully functional program."
             },
             {
                 "role": "user",
@@ -32,7 +32,7 @@ class BaseLLMService:
         ]
     
     def get_repair_vulnerability_prompt(self, input, vulnerabilities: list[Vulnerability]) -> list[map]:
-        vuln_info = "Danh sách lỗ hổng: \n"
+        vuln_info = "Vulnerabilities: \n"
         for vuln in vulnerabilities:
             vuln_info += f"- {vuln.cwe}: {vuln.message}\n"
             if vuln.location:
@@ -42,15 +42,15 @@ class BaseLLMService:
         return [
             {
                 "role": "system", 
-                "content": "Bạn là lập trình viên xuất sắc có thể giúp người dùng tạo ra các đoạn mã"
+                "content": "You are a security expert and a c language programming expert."
             },
             {
                 "role": "user", 
-                "content": "Tôi sẽ đưa cho bạn một đoạn mã chứa lỗ hổng bảo mật.Sau đó tôi sẽ đưa cho bạn danh sách các lỗ hổng được các công cụ Static Application Security Testing phát hiện ra.Bạn hãy dựa vào danh sách đó để sửa lỗi cho tôi.Bạn chỉ cần đưa ra mã nguồn của chương trình ở dạng text, không cần viết gì thêm, không cần đưa vào block code markdown"
+                "content": "I will give you a piece of code containing security vulnerabilities. Then I will provide you with a list of vulnerabilities detected by Static Application Security Testing tools. Please use that list to fix the issues for me. You only need to provide the source code of the program in text without any additional explanation, comment and Markdown code blocks."
             },
             {
                 "role": "assistant", 
-                "content": "Chắc chắn rồi, tôi có thể giúp bạn phân tích mã nguồn và kết quả từ công cụ SAST để xác định và khắc phục các vấn đề. Vui lòng cung cấp mã nguồn và kết quả từ công cụ SAST, và tôi sẽ cố gắng hết sức để hỗ trợ bạn. Tôi sẽ chỉ đưa ra mã nguồn được sửa chữa và không giải thích gì thêm."
+                "content": "Certainly. I can help you analyze the source code and the results from the SAST tools to identify and fix any issues. Please provide the source code and SAST results, and I will do my best to help you. I will only provide the repaired source code without any further explanation."
             },
             {
                 "role": "user", 
@@ -58,7 +58,7 @@ class BaseLLMService:
             },
             {
                 "role": "assistant", 
-                "content": "Tôi đã thấy mã nguồn bạn cung cấp. Để hỗ trợ bạn tốt hơn, vui lòng cung cấp kết quả từ các công cụ SAST và chỉ rõ các vấn đề hoặc lỗi mà bạn đang gặp phải. Điều này sẽ giúp tôi hiểu rõ vấn đề và đưa ra cách sửa mã chính xác hơn."
+                "content": "I have seen the source code you provided. To better assist you, please provide the SAST tool results and clearly specify the issues or errors you are encountering. This will help me understand the problem and provide a more accurate fix."
             },
             {
                 "role": "user", 
@@ -70,19 +70,19 @@ class BaseLLMService:
         return [
             {
                 "role": "system",
-                "content": "Bạn là một kỹ sư phần mềm xuất sắc có thể giúp người dùng tạo ra các câu hỏi lập trình từ đoạn mã có sẵn hoặc câu trả lời."
+                "content": "You are an excellent software engineer who can help users generate programming questions from existing code snippets or answers."
             },
             {
                 "role": "user",
-                "content": "Tôi sẽ cung cấp cho bạn một đoạn mã hoặc câu trả lời. Bạn hãy sử dụng ngữ cảnh này để tạo ra câu hỏi lập trình liên quan đến đoạn mã hoặc câu trả lời đó."
+                "content": "I will provide you with a code snippet or an answer. Please use this context to create programming questions related to the code snippet or answer."
             },
             {
                 "role": "user",
-                "content": "Lưu ý, bạn chỉ cần đưa ra 5 câu hỏi, mỗi câu ở 1 dòng riêng biệt.Ví dụ về phản hồi của bạn: \n- Câu hỏi 1: Nội dung \n- Câu hỏi 2: Nội dung \n"
+                "content": "Note that you only need to provide 5 questions, each question on a separate line. Example of your response:\n- Question 1: Content\n- Question 2: Content\n"
             },
             {
                 "role": "assistant",
-                "content": "Chắc chắn rồi. Vui lòng cung cấp ngữ cảnh chứa mã hoặc câu trả lời để tôi có thể tạo ra câu hỏi lập trình liên quan đến ngữ cảnh đó cho bạn cho bạn."
+                "content": "Certainly. Please provide the code snippet or answer so that I can create programming questions related to it for you."
             },
             {
                 "role": "user",
