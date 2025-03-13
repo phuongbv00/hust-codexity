@@ -22,13 +22,13 @@ class ItelrationRepairService:
 
         for _ in range(input.max_iterations):  
             request_sast = SASTToolRequest(
-                    code = codeGen.code
+                    code = codeGen["code"]
                 )
             sastResult = await self.common_service.callSASTTool(request_sast)
-            if not sastResult.vulnerabilities:
+            if not sastResult["vulnerabilities"]:
                 break
         
-            request_llm.vulnerabilities = sastResult.vulnerabilities
+            request_llm.vulnerabilities = sastResult["vulnerabilities"]
             codeGen = await self.common_service.callLLMChatGPT(request_llm)
             
         return codeGen

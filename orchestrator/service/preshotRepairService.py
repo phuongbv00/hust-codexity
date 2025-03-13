@@ -20,12 +20,12 @@ class PreshotRepairService:
         )
         codeGen = await self.common_service.callLLMChatGPT(request_llm)
         request_sast = SASTToolRequest(
-            code = codeGen.code
+            code = codeGen["code"]
             )
         sastResult = await self.common_service.callSASTTool(request_sast)
 
-        if sastResult.vulnerabilities:
-            request_llm.vulnerabilities = sastResult.vulnerabilities
+        if sastResult["vulnerabilities"]:
+            request_llm.vulnerabilities = sastResult["vulnerabilities"]
         codeGen = await self.common_service.callLLMChatGPT(request_llm)
             
         return codeGen
