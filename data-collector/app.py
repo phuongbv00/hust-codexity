@@ -4,6 +4,7 @@ import logging
 import time
 import re
 import os
+import html
 from flask import Flask, jsonify
 
 app = Flask(__name__)
@@ -89,6 +90,10 @@ def fetch_stackoverflow_data(tag="c", pages=5, timeout=60):
     
     return questions
 
+def clean_text(text):
+    decoded_text = html.unescape(text)  # Decode HTML entities
+    return " ".join(decoded_text.split())  # Xóa các xuống dòng và dư thừa khoảng trắng
+
 @app.route("/fetch_code", methods=["GET"])
 def fetch_code():
     data = fetch_stackoverflow_data(pages=5, timeout=60)
@@ -100,19 +105,21 @@ def fetch_code():
 
 @app.route("/get_saved_code", methods=["GET"])
 def get_saved_code():
-    """Đọc dữ liệu từ file JSON và trả về, nếu không có thì dùng sample.json."""
     try:
         with open("stackoverflow_c_code.json", "r", encoding="utf-8") as f:
             data = json.load(f)
-        if not data:
-            raise FileNotFoundError
+        
+        for item in data:
+            item["question_code"] = clean_text(item.get("question_code", ""))
+            # Lấy phần tử đầu tiên của answer_code_snippets, nếu có
+            if item["answer_code_snippets"]:
+                item["answer_code_snippets"] = clean_text(" ".join(item["answer_code_snippets"][:1]))  # Lấy phần tử đầu tiên
+            else:
+                item["answer_code_snippets"] = ""  # Nếu không có phần tử nào thì để rỗng
+            
     except (FileNotFoundError, json.JSONDecodeError):
-        try:
-            with open("sample.json", "r", encoding="utf-8") as f:
-                data = json.load(f)
-        except (FileNotFoundError, json.JSONDecodeError):
-            return jsonify({"error": "Không có dữ liệu khả dụng."}), 404
-    
+        return {"error": "Không có dữ liệu hợp lệ"}, 404
+
     return jsonify(data)
 
 if __name__ == "__main__":
