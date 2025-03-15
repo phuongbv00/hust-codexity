@@ -70,19 +70,19 @@ class BaseLLMService:
         return [
             {
                 "role": "system",
-                "content": "You are an excellent software engineer who can help users generate programming questions from existing code snippets or answers."
+                "content": "You are a software developer, you can give detailed instructions for building a program."
             },
             {
                 "role": "user",
-                "content": "I will provide you with a code snippet or an answer. Please use this context to create programming questions related to the code snippet or answer."
+                "content": "I will give you a program, summarize the meaning of each function in the program and the meaning of the program."
             },
             {
                 "role": "user",
-                "content": "Note that you only need to provide 1 questions, response only contrains question"
+                "content": "Example:\r\nInput:\r\n#include <stdio.h>\r\n#include <stdlib.h>\r\n\r\ntypedef struct {\r\n    int *arr;\r\n    int capacity;\r\n    int size;\r\n} List;\r\n\r\nList *list_new() {\r\n    List *list = (List *) malloc(sizeof(List));\r\n    list->arr = NULL;\r\n    list->capacity = 0;\r\n    list->size = 0;\r\n    return list;\r\n}\r\n\r\nvoid list_add(List *list, int value) {\r\n    if (list->size == list->capacity) {\r\n        int newCapacity = (list->capacity == 0) ? 1 : list->capacity * 2;\r\n        int *newArr = (int *) realloc(list->arr, newCapacity * sizeof(int));\r\n        if (newArr == NULL) {\r\n            printf(\"Memory allocation failed.\\n\");\r\n            return;\r\n        }\r\n        list->arr = newArr;\r\n        list->capacity = newCapacity;\r\n    }\r\n    list->arr[list->size] = value;\r\n    list->size++;\r\n}\r\n\r\nvoid list_print(List *list) {\r\n    printf(\"List: \");\r\n    for (int i = 0; i < list->size; i++) {\r\n        printf(\"%d \", list->arr[i]);\r\n    }\r\n    printf(\"\\n\");\r\n}\r\n\r\nvoid list_free(List *list) {\r\n    free(list->arr);\r\n    free(list);\r\n}\r\n\r\nint main() {\r\n    List *list = list_new();\r\n    list_add(list, 10);\r\n    list_add(list, 20);\r\n    list_add(list, 30);\r\n    list_print(list);\r\n    list_free(list);\r\n    return 0;\r\n}"
             },
             {
-                "role": "assistant",
-                "content": "Certainly. Please provide the code snippet or answer so that I can create programming questions related to it for you."
+                "role": "user",
+                "content": "output:\r\nSummary of the Program: This program implements a dynamic list (similar to a dynamically resizing array) in C. It allows adding integers to the list, dynamically resizes the list as needed, prints the contents, and properly frees memory when done.\r\n\r\nFunction Breakdown:\r\n- List *list_new() : Creates a new empty list.\r\n- void list_add(List *list, int value): Adds a new integer to the list, resizing it dynamically if needed.\r\n- void list_print(List *list): Prints all the elements in the list.\r\n- void list_free(List *list): Frees the dynamically allocated memory used by the list.\r\n- int main(): Demonstrates the usage of the dynamic list."
             },
             {
                 "role": "user",
