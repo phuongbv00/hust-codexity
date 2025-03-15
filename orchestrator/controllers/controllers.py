@@ -2,20 +2,22 @@ from fastapi import APIRouter, HTTPException
 from models.itelrationRepair import ItelrationRepairInput
 from models.preshotRepair import PreshotRepairInput
 from service.itelrationRepairService import ItelrationRepairService
+from service.preshotRepairService import PreshotRepairService
 from service.commonService import CommonService
 
 router = APIRouter()
+common_service = CommonService()
 
 @router.get("/")
 def read_root():
     return {"Hello": "World"}
 
-@router.get("/iteration-repair")
+@router.post("/iteration-repair")
 async def iteration_repair(request: ItelrationRepairInput):
-    common_service = CommonService()
     itelrationRepairService = ItelrationRepairService(common_service)
-    return itelrationRepairService.itelrationRepair(request)
+    return await itelrationRepairService.itelrationRepair(request)
 
-@router.get("/preshot-repair")
+@router.post("/preshot-repair")
 async def preshot_repair(request: PreshotRepairInput):
-    return "anhvu"
+    preshotRepairService = PreshotRepairService(common_service)
+    return await preshotRepairService.preshotRepair(request)
