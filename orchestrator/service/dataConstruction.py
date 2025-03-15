@@ -52,10 +52,10 @@ class DataConstruction:
                 checkPrompt = True
 
         if checkPrompt: 
-            self.common_service.write_result("Data", str(index), "prompt.c", post["answer_code_snippets"])
+            self.common_service.write_result("data_v2", str(index), "prompt.c", post["answer_code_snippets"])
             fileName = 1
             for codeVul in codeVulnerabilities:
-                self.common_service.write_result("Data", str(index), str(fileName) + ".c", codeVul)
+                self.common_service.write_result("data_v2", str(index), str(fileName) + ".c", codeVul)
                 fileName = fileName + 1
 
     def createData(self):
@@ -64,16 +64,10 @@ class DataConstruction:
         response = requests.get(f"{URL_GET_POST}")
         response.raise_for_status()  # Nếu lỗi, nó sẽ tự động raise exception
         totalPost =  response.json()
-        codeVulnerabilities = []
-        questions = []
 
         if totalPost and len(totalPost) > 0:
-            # print(totalPost[0]["answer_code_snippets"])
-            response2 = self.genQuestion(totalPost[1], 2)
-            # for post in totalPost:
-            #     response = self.genQuestion(post)
+            for post in totalPost:
+                response = self.genQuestion(post)
         #         if response.codeVulnerabilities:
         #             questions.append(response.question)
         #             codeVulnerabilities.extend(response.codeVulnerabilities)
-
-        return response2
