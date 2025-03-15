@@ -2,7 +2,7 @@
 from pydantic import BaseModel
 from CheckCppFromSnippet import check_cpp_code
 import json
-
+import uvicorn
 
 app = FastAPI()
 
@@ -62,3 +62,7 @@ async def analyze_code(code_snippet: CodeSnippet):
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
         raise HTTPException(status_code=500, detail="Internal Server Error")
+    
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="127.0.0.1", port=8082)

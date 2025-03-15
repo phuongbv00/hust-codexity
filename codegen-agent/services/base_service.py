@@ -78,7 +78,7 @@ class BaseLLMService:
             },
             {
                 "role": "user",
-                "content": "Note that you only need to provide 5 questions, each question on a separate line. Example of your response:\n- Question 1: Content\n- Question 2: Content\n"
+                "content": "Note that you only need to provide 1 questions, response only contrains question"
             },
             {
                 "role": "assistant",

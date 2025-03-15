@@ -12,28 +12,36 @@ class ItelrationRepairService:
 
     # Itelration Repair Flow
     def itelrationRepair(self, input: ItelrationRepairInput):
-        # call LLM
-        request_llm = GenerateCodeRequest(
-            prompt = input.prompt,
-            temperature = 0.5,  # Gán giá trị tùy chỉnh
-            max_tokens = 1024,
-            model_type = "chatgpt",
-            vulnerabilities = []
-        )
-        codeGen = self.common_service.callLLMChatGPT(request_llm)
-
-        for _ in range(input.max_iterations):  
-            request_sast = SASTToolRequest(
-                    code = codeGen["code"]
-                )
-            sastResult = self.common_service.callSASTTool(request_sast)
-            if not sastResult["vulnerabilities"]:
-                break
         
-            request_llm.vulnerabilities = sastResult["vulnerabilities"]
-            codeGen = self.common_service.callLLMChatGPT(request_llm)
-            
-        return codeGen
+        vulnerabilities = []
+        request_llm = GenerateCodeRequest(
+                prompt = input.prompt,
+                temperature = 0.5,  # Gán giá trị tùy chỉnh
+                max_tokens = 1024,
+                model_type = "chatgpt",
+                vulnerabilities = []
+            )
+        for _ in range(input.max_iterations):  
+            try:
+                # call LLM
+                codeGen = self.common_service.callLLMChatGPT(request_llm)
+                request_sast = SASTToolRequest(
+                        code = codeGen["code"]
+                    )
+                sastResult = self.common_service.callSASTTool(request_sast)
+                if not sastResult["vulnerabilities"]:
+                    break
+                request_llm.vulnerabilities = sastResult["vulnerabilities"]
+                vulnerabilities = sastResult["vulnerabilities"]
+            except Exception as e:
+                print("Error: ", e)
+                continue
+
+        res = {
+            "code": codeGen["code"],
+            "vulnerabilities": vulnerabilities
+        }
+        return res
     
 
     def codexity(self):

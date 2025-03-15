@@ -9,23 +9,39 @@ class PreshotRepairService:
         self.common_service = common_service
 
     # Preshot Repair Flow
-    async def preshotRepair(self, input: ItelrationRepairInput):
-        # call LLM local
-        request_llm = GenerateCodeRequest(
-            prompt = input.prompt,
-            temperature = 0.5,  # Gán giá trị tùy chỉnh
-            max_tokens = 500,
-            model_type = "local",
+    def preshotRepair(self, input: ItelrationRepairInput):
+        try:
             vulnerabilities = []
-        )
-        codeGen = await self.common_service.callLLMChatGPT(request_llm)
-        request_sast = SASTToolRequest(
-            code = codeGen["code"]
+            # call LLM local
+            request_llm = GenerateCodeRequest(
+                prompt = input.prompt,
+                temperature = 0.5,  # Gán giá trị tùy chỉnh
+                max_tokens = 1024,
+                model_type = "local",
+                vulnerabilities = []
             )
-        sastResult = await self.common_service.callSASTTool(request_sast)
+            codeGen = self.common_service.callLLMChatGPT(request_llm)
+            # call SAST tool
+            request_sast = SASTToolRequest(
+                code = codeGen["code"]
+                )
+            sastResult = self.common_service.callSASTTool(request_sast)
 
-        if sastResult["vulnerabilities"]:
-            request_llm.vulnerabilities = sastResult["vulnerabilities"]
-        codeGen = await self.common_service.callLLMChatGPT(request_llm)
+            if sastResult["vulnerabilities"]:
+                request_llm.vulnerabilities = sastResult["vulnerabilities"]
+            # call LLM chatGPT
+            request_llm.model_type = "chatgpt"
+            codeGen = self.common_service.callLLMChatGPT(request_llm)
             
-        return codeGen
+            # call SAST tool check final vul
+            request_sast.code = codeGen["code"]
+            sastResult = self.common_service.callSASTTool(request_sast)
+            vulnerabilities = sastResult["vulnerabilities"]
+        except Exception as e:
+            print("Error: ", e)
+
+        res = {
+            "code": codeGen["code"],
+            "vulnerabilities": vulnerabilities
+        }    
+        return res

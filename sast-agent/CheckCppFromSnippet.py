@@ -54,6 +54,7 @@ def check_cpp_code(cpp_code):
                 "-j4",
                 "--xml",
                 "--output-file=cppcheck_report.xml",
+                "--check-level=exhaustive",
                 cpp_file_path
             ]
 

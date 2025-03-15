@@ -3,6 +3,7 @@ from services.chatgpt_service import ChatGPTService
 from services.local_service import LocalService
 from models.generate_code import GenerateCodeRequest, LLM_TYPE
 from models.generate_question_prompt import GenerateQuestionPromptRequest
+import uvicorn
 app = FastAPI()
 chat_gpt_service = ChatGPTService()
 local_service = LocalService()
@@ -23,3 +24,6 @@ def generate_programming_question_prompt(request: GenerateQuestionPromptRequest)
         return chat_gpt_service.generate_programming_question_prompt(request)
     else:
         return local_service.generate_programming_question_prompt(request)
+    
+if __name__ == "__main__":
+    uvicorn.run(app, host="127.0.0.1", port=8081)
