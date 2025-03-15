@@ -4,8 +4,8 @@ This is a microservice for collecting data from Stackoverflow and providing APIs
 
 This microservice has 2 api:
 
- 1. `[GET]: http://{domain:port}/fetch_code` : Trigger collecting data from Stackoverflow (call api.stackexchange.com) to get questions and answers. After getting data, save them at `stackoverflow_c_code.json`.
- 2. `[GET]: http://{domain:port}/get_saved_code`: Get and return data from  `stackoverflow_c_code.json` . If file `stackoverflow_c_code.json` does not exist or empty, using file `sample-data.json` instead.
+ 1. `[GET]: http://{domain:port}/crawl-and-prepare` : Trigger collecting data from Stackoverflow (call api.stackexchange.com) to get questions and answers. After getting data, save them at `stackoverflow_c_code.json`.
+ 2. `[GET]: http://{domain:port}/fetch-dataset`: Get and return data from  `stackoverflow_c_code.json` . If file `stackoverflow_c_code.json` does not exist or empty, using file `sample-data.json` instead.
 
 # How to install
 Follow this guide to run this microservice 

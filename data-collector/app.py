@@ -94,8 +94,8 @@ def clean_text(text):
     decoded_text = html.unescape(text)  # Decode HTML entities
     return " ".join(decoded_text.split())  # Xóa các xuống dòng và dư thừa khoảng trắng
 
-@app.route("/fetch_code", methods=["GET"])
-def fetch_code():
+@app.route("/crawl-and-prepare", methods=["GET"])
+def crawl_and_prepare():
     data = fetch_stackoverflow_data(pages=5, timeout=60)
 
     if not data:
@@ -103,8 +103,8 @@ def fetch_code():
 
     return jsonify({"message": "Dữ liệu đã được lưu vào stackoverflow_c_code.json"})
 
-@app.route("/get_saved_code", methods=["GET"])
-def get_saved_code():
+@app.route("/fetch-dataset", methods=["GET"])
+def fetch_dataset():
     try:
         with open("stackoverflow_c_code.json", "r", encoding="utf-8") as f:
             data = json.load(f)
