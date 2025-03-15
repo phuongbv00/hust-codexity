@@ -99,28 +99,34 @@ def crawl_and_prepare():
     data = fetch_stackoverflow_data(pages=5, timeout=60)
 
     if not data:
-        return jsonify([])  # Trả về mảng rỗng nếu crawl thất bại trong 1 phút
+        return jsonify({
+        "total": len(data),  # Tổng số item crawl được
+        "data": data if data else []  # Nếu không có dữ liệu, trả về mảng rỗng
+    })  # Trả về mảng rỗng nếu crawl thất bại trong 1 phút
 
     return jsonify({"message": "Dữ liệu đã được lưu vào stackoverflow_c_code.json"})
 
 @app.route("/fetch-dataset", methods=["GET"])
 def fetch_dataset():
-    try:
-        with open("stackoverflow_c_code.json", "r", encoding="utf-8") as f:
-            data = json.load(f)
-        
-        for item in data:
-            item["question_code"] = clean_text(item.get("question_code", ""))
-            # Lấy phần tử đầu tiên của answer_code_snippets, nếu có
-            if item["answer_code_snippets"]:
-                item["answer_code_snippets"] = clean_text(" ".join(item["answer_code_snippets"][:1]))  # Lấy phần tử đầu tiên
-            else:
-                item["answer_code_snippets"] = ""  # Nếu không có phần tử nào thì để rỗng
-            
-    except (FileNotFoundError, json.JSONDecodeError):
-        return {"error": "Không có dữ liệu hợp lệ"}, 404
+    dataset_files = ["stackoverflow_c_code.json", "sample-data.json"]
+    for file in dataset_files:
+        try:
+            with open(file, "r", encoding="utf-8") as f:
+                raw_data = json.load(f)
+            data = raw_data.get("data", [])
+            if data:
+                for item in data:
+                    item["question_code"] = clean_text(item.get("question_code", ""))
+                    # Lấy phần tử đầu tiên của answer_code_snippets, nếu có
+                    if item["answer_code_snippets"]:
+                        item["answer_code_snippets"] = clean_text(" ".join(item["answer_code_snippets"][:1]))  # Lấy phần tử đầu tiên
+                    else:
+                        item["answer_code_snippets"] = ""  # Nếu không có phần tử nào thì để rỗng
+                return jsonify(data if data else [])
+                
+        except (FileNotFoundError, json.JSONDecodeError):
+            return jsonify([]), 404
 
-    return jsonify(data)
 
 if __name__ == "__main__":
     setup_logging()
