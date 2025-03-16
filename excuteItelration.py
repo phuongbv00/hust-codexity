@@ -19,7 +19,7 @@ def codexity():
         print(f"Warning: {folder_path} not found!")
 
     # Lặp qua tất cả file .c trong thư mục con
-    i = 1
+    i =0
     for file_name in os.listdir(folder_path):
         try:
             if file_name.endswith(".c"):  # Chỉ xử lý file .c
@@ -38,6 +38,9 @@ def codexity():
                     codeVul += 1
                 else:
                     codeNonVul += 1
+
+                i += 1
+                print("Process: ",i)
         except Exception as e:
             print("Error: ", e)
             continue
@@ -54,7 +57,7 @@ def codexity():
 
 if __name__ == "__main__":
     response =  codexity()
-    print("Số lượng code ban đầu: ", 990)
+    print("Số lượng code ban đầu: ", 90)
     print("Số lượng code được xử lý chạy qua bộ lọc lỗ hổng bảo mật: ", response["codeProcess"])
     print("Số lượng code sau khi xử lý không còn lỗ hổng bảo mật: ", response["codeNonVul"])
     print("Số lượng code sau khi xử lý còn lỗ hổng bảo mật: ", response["codeVul"])

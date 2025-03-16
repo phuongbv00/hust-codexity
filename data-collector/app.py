@@ -131,5 +131,5 @@ def fetch_dataset():
 if __name__ == "__main__":
     setup_logging()
     print("Bắt đầu crawl dữ liệu từ StackOverflow...")
-    fetch_stackoverflow_data(pages=5)
+    # fetch_stackoverflow_data(pages=5)
     app.run(host="0.0.0.0", port=8080, debug=True, use_reloader=True)

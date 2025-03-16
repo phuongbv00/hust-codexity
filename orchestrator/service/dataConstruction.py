@@ -1,3 +1,5 @@
+from operator import index
+
 import httpx
 from service.commonService import CommonService
 from models.sastTool import SASTToolRequest
@@ -6,7 +8,7 @@ import json
 import os
 import requests
 
-URL_GET_POST="http://localhost:8080/get_saved_code"
+URL_GET_POST="http://localhost:8080/fetch-dataset"
 
 class DataConstruction:
     def __init__(self, common_service: CommonService):
@@ -65,9 +67,12 @@ class DataConstruction:
         response.raise_for_status()  # Nếu lỗi, nó sẽ tự động raise exception
         totalPost =  response.json()
 
+        index= 1
         if totalPost and len(totalPost) > 0:
             for post in totalPost:
-                response = self.genQuestion(post)
+                response = self.genQuestion(post,index)
+                index = index + 1
+
         #         if response.codeVulnerabilities:
         #             questions.append(response.question)
         #             codeVulnerabilities.extend(response.codeVulnerabilities)

@@ -1,0 +1,1 @@
+void * <stdlib.h> int int int *sieve = malloc(length * sizeof *sieve); sizeof sizeof length sizeof sizeof length int *sieve = malloc(sizeof *sieve * length); sizeof size_t malloc(sizeof *sieve * length * width) malloc(length * width * sizeof *sieve) length * width width length size_t

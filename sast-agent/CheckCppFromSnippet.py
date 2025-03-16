@@ -133,8 +133,6 @@ def xml_to_json(xml_string):
         error["location"] = location
         errors.append(error)
 
-    if not errors:
-        return None
 
     results["file"] = xml_string.split("file=\"")[1].split("\"")[0]
     results["errors"] = errors

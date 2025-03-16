@@ -3,8 +3,53 @@ import json
 import os
 import tempfile
 from typing import Dict, List, Optional
+from dataclasses import dataclass
+from datetime import datetime
 
-def analyze_code_snippet(code_snippet: str, file_extension: str = ".cpp") -> Dict:
+@dataclass
+class Vulnerability:
+    """Class for representing a security vulnerability"""
+    file: str
+    line: int
+    bug_type: str
+    qualifier: str
+    severity: str
+    suggestion: str
+    cwe: Optional[str] = None
+    
+    def to_dict(self) -> Dict:
+        """Convert vulnerability to dictionary"""
+        return {
+            "file": self.file,
+            "line": self.line,
+            "bug_type": self.bug_type,
+            "qualifier": self.qualifier,
+            "severity": self.severity,
+            "suggestion": self.suggestion,
+            "cwe": self.cwe
+        }
+
+@dataclass
+class SecurityReport:
+    """Class for representing the security analysis report"""
+    status: str
+    issues: Dict[str, List[Vulnerability]]
+    total_issues: int
+    analysis_time: float
+    
+    def to_dict(self) -> Dict:
+        """Convert report to dictionary"""
+        return {
+            "status": self.status,
+            "issues": {
+                severity: [vuln.to_dict() for vuln in vulns]
+                for severity, vulns in self.issues.items()
+            },
+            "total_issues": self.total_issues,
+            "analysis_time": self.analysis_time
+        }
+
+def analyze_code_snippet(code_snippet: str, file_extension: str = ".cpp") -> SecurityReport:
     """
     Analyze code snippet for security vulnerabilities
     
@@ -13,7 +58,7 @@ def analyze_code_snippet(code_snippet: str, file_extension: str = ".cpp") -> Dic
         file_extension (str): File extension (.cpp, .c, .java, etc.)
         
     Returns:
-        Dict: Security analysis results
+        SecurityReport: Security analysis results
     """
     try:
         # Create temporary directory to store code
@@ -31,12 +76,14 @@ def analyze_code_snippet(code_snippet: str, file_extension: str = ".cpp") -> Dic
             # Run security analysis
             return run_infer_security_check(temp_dir)
     except Exception as e:
-        return {
-            "status": "error",
-            "message": f"Error analyzing code snippet: {str(e)}"
-        }
+        return SecurityReport(
+            status="error",
+            issues={},
+            total_issues=0,
+            analysis_time=datetime.now().timestamp(),
+        )
 
-def run_infer_security_check(project_path: str, output_dir: str = "infer-out") -> Dict:
+def run_infer_security_check(project_path: str, output_dir: str = "infer-out") -> SecurityReport:
     """
     Run Infer to check for security vulnerabilities in source code
     
@@ -45,7 +92,7 @@ def run_infer_security_check(project_path: str, output_dir: str = "infer-out") -
         output_dir (str): Directory to store analysis results
         
     Returns:
-        Dict: Security analysis results
+        SecurityReport: Security analysis results
     """
     try:
         # Delete old output directory if exists
@@ -74,7 +121,7 @@ def run_infer_security_check(project_path: str, output_dir: str = "infer-out") -
                 results = json.load(f)
                 
             # Classify issues by severity
-            security_issues = {
+            security_issues: Dict[str, List[Vulnerability]] = {
                 "critical": [],
                 "high": [],
                 "medium": [],
@@ -83,37 +130,45 @@ def run_infer_security_check(project_path: str, output_dir: str = "infer-out") -
             
             for issue in results:
                 severity = _determine_severity(issue)
-                security_issues[severity].append({
-                    "file": issue.get("file"),
-                    "line": issue.get("line"),
-                    "bug_type": issue.get("bug_type"),
-                    "qualifier": issue.get("qualifier"),
-                    "severity": severity,
-                    "suggestion": _get_security_suggestion(issue.get("bug_type", ""))
-                })
+                vulnerability = Vulnerability(
+                    file=issue.get("file", ""),
+                    line=issue.get("line", 0),
+                    bug_type=issue.get("bug_type", ""),
+                    qualifier=issue.get("qualifier", ""),
+                    severity=severity,
+                    suggestion=_get_security_suggestion(issue.get("bug_type", "")),
+                    cwe=_map_to_cwe(issue.get("bug_type", ""))
+                )
+                security_issues[severity].append(vulnerability)
                 
-            return {
-                "status": "success",
-                "issues": security_issues,
-                "total_issues": len(results),
-                "analysis_time": os.path.getmtime(report_path)
-            }
+            return SecurityReport(
+                status="success",
+                issues=security_issues,
+                total_issues=len(results),
+                analysis_time=os.path.getmtime(report_path)
+            )
         
-        return {
-            "status": "error",
-            "message": "Report file not found"
-        }
+        return SecurityReport(
+            status="error",
+            issues={},
+            total_issues=0,
+            analysis_time=datetime.now().timestamp()
+        )
         
     except subprocess.CalledProcessError as e:
-        return {
-            "status": "error",
-            "message": f"Error running Infer: {str(e)}"
-        }
+        return SecurityReport(
+            status="error",
+            issues={},
+            total_issues=0,
+            analysis_time=datetime.now().timestamp()
+        )
     except Exception as e:
-        return {
-            "status": "error",
-            "message": f"Unknown error: {str(e)}"
-        }
+        return SecurityReport(
+            status="error",
+            issues={},
+            total_issues=0,
+            analysis_time=datetime.now().timestamp()
+        )
 
 def _determine_severity(issue: Dict) -> str:
     """
@@ -171,12 +226,30 @@ def _get_security_suggestion(bug_type: str) -> str:
     }
     return suggestions.get(bug_type.lower(), "Review and fix according to guidelines")
 
-def save_report_to_json(report: Dict, output_file: str = "security_report.json") -> None:
+def _map_to_cwe(bug_type: str) -> Optional[str]:
+    """
+    Map Infer bug type to CWE ID
+    """
+    cwe_mapping = {
+        "null_dereference": "CWE-476",  # NULL Pointer Dereference
+        "memory_leak": "CWE-401",       # Memory Leak
+        "buffer_overflow": "CWE-120",    # Buffer Overflow
+        "race_condition": "CWE-362",     # Race Condition
+        "deadlock": "CWE-833",          # Deadlock
+        "resource_leak": "CWE-772",      # Missing Release of Resource
+        "use_after_free": "CWE-416",    # Use After Free
+        "command_injection": "CWE-78",   # OS Command Injection
+        "sql_injection": "CWE-89",      # SQL Injection
+        "xss": "CWE-79"                 # Cross-site Scripting
+    }
+    return cwe_mapping.get(bug_type.lower())
+
+def save_report_to_json(report: SecurityReport, output_file: str = "security_report.json") -> None:
     """
     Save report to JSON file
     """
     with open(output_file, 'w', encoding='utf-8') as f:
-        json.dump(report, f, ensure_ascii=False, indent=2)
+        json.dump(report.to_dict(), f, ensure_ascii=False, indent=2)
 
 if __name__ == "__main__":
     # Example usage with code snippet
@@ -208,4 +281,4 @@ if __name__ == "__main__":
     save_report_to_json(results)
     
     # Print results to screen
-    print(json.dumps(results, indent=2))
+    print(json.dumps(results.to_dict(), indent=2))

@@ -29,7 +29,8 @@ class ItelrationRepairService:
                         code = codeGen["code"]
                     )
                 sastResult = self.common_service.callSASTTool(request_sast)
-                if not sastResult["vulnerabilities"]:
+                print("logsss SastResult: ", sastResult)
+                if not sastResult.get("vulnerabilities"):
                     break
                 request_llm.vulnerabilities = sastResult["vulnerabilities"]
                 vulnerabilities = sastResult["vulnerabilities"]

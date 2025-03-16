@@ -1,4 +1,3 @@
-from models.vulnerability import Vulnerability
 from pydantic import BaseModel
 from enum import Enum
 class LLM_TYPE(Enum):
@@ -9,8 +8,7 @@ class GenerateCodeRequest(BaseModel):
     temperature: float
     max_tokens: int
     model_type: str
-    vulnerabilities: list[Vulnerability]
-
+    vulnerabilities: list
 class GenerateCodeResponse:
     code: str
     def __init__(self, code: str):

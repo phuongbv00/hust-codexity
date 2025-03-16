@@ -1,0 +1,1 @@
+Please provide the specific idea, problem, or code snippet you would like me to complete, and I will generate the full source code for you.
