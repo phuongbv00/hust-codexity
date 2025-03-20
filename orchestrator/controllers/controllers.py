@@ -5,6 +5,7 @@ from service.itelrationRepairService import ItelrationRepairService
 from service.preshotRepairService import PreshotRepairService
 from service.commonService import CommonService
 from service.dataConstruction import DataConstruction
+from service.hybridService import HybridService
 
 router = APIRouter()
 common_service = CommonService()
@@ -22,6 +23,11 @@ def iteration_repair(request: ItelrationRepairInput):
 def preshot_repair(request: PreshotRepairInput):
     preshotRepairService = PreshotRepairService(common_service)
     return preshotRepairService.preshotRepair(request)
+
+@router.post("/hybrid-repair")
+def preshot_repair(request: ItelrationRepairInput):
+    hybridService = HybridService(common_service)
+    return hybridService.hybridRepair(request)
 
 @router.post("/data-construction")
 def data_construction():
