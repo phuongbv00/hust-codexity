@@ -5,6 +5,7 @@ services:
     build:
       context: ./codegen-agent
       dockerfile: Dockerfile
+    env_file: ./codegen-agent/.env
     ports:
       - "8081:8081"  # Adjust the ports as necessary
 
