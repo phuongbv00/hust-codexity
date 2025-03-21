@@ -1,1 +1,0 @@
-Please provide the specific code or the idea you would like me to complete, and I will create a full source code program based on that.

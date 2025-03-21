@@ -1,1 +1,0 @@
-Please provide the idea, problem, or incomplete program you'd like me to complete.
