@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  evaluate-hybrid:
+    build:
+      context: ./evaluate
+      dockerfile: excuteHybrid.Dockerfile
+
+  evaluate-iteration:
+    build:
+      context: ./evaluate
+      dockerfile: excuteIteration.Dockerfile
+
+  evaluate-preshot:
+    build:
+      context: ./evaluate
+      dockerfile: excutePreshot.Dockerfile
