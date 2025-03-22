@@ -36,7 +36,7 @@ class BaseLLMService:
         for vuln in vulnerabilities:
             vuln_info += f"- {vuln.cwe}: {vuln.message}\n"
             if vuln.location:
-                line_info = f" (Dòng {vuln.location.line})" if hasattr(vuln.location, "line") else ""
+                line_info = f" (Line {vuln.location.line})" if hasattr(vuln.location, "line") else ""
                 vuln_info += line_info
 
         return [
@@ -46,11 +46,19 @@ class BaseLLMService:
             },
             {
                 "role": "user", 
-                "content": "I will give you a piece of code containing security vulnerabilities. Then I will provide you with a list of vulnerabilities detected by Static Application Security Testing tools. Please use that list to fix the issues for me. You only need to provide the source code of the program in text without any additional explanation, comment and Markdown code blocks."
+                "content": "I will give you a piece of code containing security vulnerabilities."
+            },
+            {
+                "role": "user",
+                "content": "Then I will provide you with a list of vulnerabilities detected by Static Application Security Testing tools."
+            },
+            {
+                "role": "user",
+                "content": "Please use that list to fix the issues for me. You MUST return only the source code without any additional explanation, comment"
             },
             {
                 "role": "assistant", 
-                "content": "Certainly. I can help you analyze the source code and the results from the SAST tools to identify and fix any issues. Please provide the source code and SAST results, and I will do my best to help you. I will only provide the repaired source code without any further explanation."
+                "content": "Please provide the source code"
             },
             {
                 "role": "user", 
@@ -58,7 +66,7 @@ class BaseLLMService:
             },
             {
                 "role": "assistant", 
-                "content": "I have seen the source code you provided. To better assist you, please provide the SAST tool results and clearly specify the issues or errors you are encountering. This will help me understand the problem and provide a more accurate fix."
+                "content": "I have seen the source code you provided.Please provide the SAST tool results. This will help me understand the problem and provide a more accurate fix."
             },
             {
                 "role": "user", 

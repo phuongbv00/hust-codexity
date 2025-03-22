@@ -20,7 +20,7 @@ class LocalService(BaseLLMService):
             messages = self.get_normal_prompt(request.prompt)
         
         # Gọi đến OpenAI 
-        print(messages)
+        print(request.prompt)
         response = self.client.chat.completions.create(
             model=self.settings.openai_model,
             temperature=request.temperature,
@@ -29,10 +29,12 @@ class LocalService(BaseLLMService):
         )
         
         # Trích xuất code từ response
-        generated_code = response.choices[0].message.content
-        
+        result = response.choices[0].message.content
+        result = result.replace("```c\n", "")
+        result = result.replace("```", "")
+        print(result)
         # Trả về code trong response format
-        return GenerateCodeResponse(code=generated_code)
+        return GenerateCodeResponse(code=result)
 
     def generate_programming_question_prompt(self, request): 
          
