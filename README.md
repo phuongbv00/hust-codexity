@@ -8,6 +8,15 @@
 - [CppCheck](https://cppcheck.sourceforge.io/#download)
 - [LM Studio](https://lmstudio.ai/)
 
+### Retrieve OpenAI API key
+
+[https://help.openai.com/en/articles/4936850-where-do-i-find-my-openai-api-key](https://help.openai.com/en/articles/4936850-where-do-i-find-my-openai-api-key)
+
+### Setup LM Studio
+
+1. [Load model to memory](https://lmstudio.ai/docs/app/basics)
+2. [Activate API Server](https://lmstudio.ai/docs/app/api)
+
 ### Run up services
 
 #### codegen-agent
